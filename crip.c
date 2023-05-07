@@ -174,9 +174,39 @@ void entrada_chave(){
 	fclose(keys);
 }
 
-int main(){
-	entrada_chave();
-	entrada_frase();
-	desencriptaMensagem();
-	return 0;
+void menu()
+{
+    int opcao;
+    while (opcao != 4) {
+        printf("Escolha uma das opcoes disponiveis:\n");
+        printf("1- Gerar chave publica\n");
+        printf("2- Criptografar uma mensagem\n");
+        printf("3- Descriptografar uma mensagem\n");
+        printf("4- Sair\n");
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+        switch (opcao) {
+            case 1:
+                entrada_chave();
+                break;
+            case 2:
+                entrada_frase();
+                break;
+            case 3:
+                desencriptaMensagem();
+                break;
+            case 4:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opcao invalida! Tente novamente.\n");
+                break;
+        }
+    }
+}
+
+int main()
+{
+    menu();
+    return 0;
 }
