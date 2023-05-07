@@ -176,7 +176,7 @@ void entrada_chave(){
 
 void menu()
 {
-    int opcao;
+    int opcao = 0;
     while (opcao != 4) {
         printf("Escolha uma das opcoes disponiveis:\n");
         printf("1- Gerar chave publica\n");
