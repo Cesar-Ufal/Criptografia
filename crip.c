@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 unsigned long int exponenciacao_modular_rapida(unsigned long int denominador, unsigned long int potencia, unsigned long int mod)
 {
     unsigned long int n = denominador, k = potencia, d = mod;
@@ -77,30 +79,31 @@ void inverso_modular(unsigned long int a, unsigned long int m, unsigned long int
 }
 
 void desencriptaMensagem(){
+    printf("descript\n");
     char cript_name[125];
     FILE *cript = NULL;
     unsigned long int p, q, phi, e, d, n, c, m;
-    printf("Digite o valor de p: ");
+    printf("Digite o valor de p:\n");
     scanf("%lu", &p);
-    printf("\nDigite o valor de q: ");
+    printf("Digite o valor de q:\n");
     scanf("%lu", &q);
     phi = (p - 1) * (q - 1);
     n = p * q;
-    printf("\nDigite o valor de e: ");
-    scanf("%d", &e);
+    printf("Digite o valor de e:\n");
+    scanf("%lu", &e);
     inverso_modular(e, phi, &d);
     if(d == 0){
       printf("e não é coprimo de (p - 1) * (q - 1)\n");
       return ;
     }
     while(cript == NULL){
-        printf("Digite o nome do arquivo onde se encontra a mensagem: ");
+        printf("Digite o nome do arquivo onde se encontra a mensagem:\n");
         scanf("%s", cript_name);
         cript = fopen(cript_name, "r");
         if(cript == NULL)
             printf("Arquivo não encontrado ou não existe, favor: \n");
     }
-    while(fscanf(cript, "%d", &c) != EOF){
+    while(fscanf(cript, "%lu", &c) != EOF){
         m = exponenciacao_modular_rapida(c, d, n);
         if(m == 28){
             printf(" ");
@@ -116,12 +119,8 @@ void desencriptaMensagem(){
 
 void entrada_frase()
 {
-    FILE *keys;
-    FILE *crip;
     unsigned long int p = 0, q = 0, e = 0;
- 
-    crip = fopen("grifado.txt", "w");
-    keys = fopen("chaves.txt", "r+");
+    FILE *keys = fopen("chaves.txt", "r+");
     
     if(keys == NULL)
     {
@@ -131,14 +130,14 @@ void entrada_frase()
     else 
     {
         fscanf(keys, "p = %lu q = %lu e = %lu", &p, &q, &e);
+        fclose(keys);
         unsigned long int n = p * q;
-        char frase[10000], aux[10000];
-        printf("Digite sua frase: ");
-        scanf(" %[^\n]\n", frase);
-        
+        char frase[10000];
+        printf("Digite sua frase:\n");
+        scanf("\n%[^\n]", frase);
         int tamanho_frase;
- 
-        for (tamanho_frase = 0; frase[tamanho_frase] != \0; tamanho_frase++) 
+ 		FILE *crip = fopen("grifado.txt", "w");
+        for (tamanho_frase = 0; frase[tamanho_frase] != '\0'; tamanho_frase++) 
         {
             unsigned long int m = 0;
             if(frase[tamanho_frase] == ' '){
@@ -150,9 +149,34 @@ void entrada_frase()
             }
             fprintf(crip, "%lu\n", exponenciacao_modular_rapida(m, e, n));
         }
-        
         printf("Texto criptografado com sucesso!\n"); 
-        fclose(keys);
         fclose(crip);
     }
+}
+
+void entrada_chave(){
+	unsigned long int p, q, e, d, phi;
+	printf("Digite o valor de p:\n");
+	scanf("%lu", &p);
+	printf("Digite o valor de q:\n");
+	scanf("%lu", &q);
+	phi = (p - 1) * (q - 1);
+	printf("Digite o valor de e:\n");
+	scanf("%lu", &e);
+	inverso_modular(e, phi, &d);
+	while(d == 0){
+		printf("e não é coprimo de (p - 1) * (q - 1)\nDigite o valor de e:\n");
+		scanf("%lu", &e);
+		inverso_modular(e, phi, &d);
+	}
+	FILE *keys = fopen("chaves.txt", "w");
+	fprintf(keys, "p = %lu q = %lu e = %lu", p, q, e);
+	fclose(keys);
+}
+
+int main(){
+	entrada_chave();
+	entrada_frase();
+	desencriptaMensagem();
+	return 0;
 }
